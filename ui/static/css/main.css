@@ -1,0 +1,186 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+  background-color: #e7ebe3;
+  background-image: url("/btlship/static/img/church.png");
+  color: #171717;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 1.25em;
+  height: 100vh;
+  line-height: 1.5;
+  overflow-y: scroll;
+}
+
+article {
+  margin: 0.3125em auto;
+  /*min-width: 24em;*/
+  padding: 0.3125em;
+}
+
+#banner {
+  margin: 0 auto;
+}
+
+.boards {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.boards div {
+  padding: 0.625em;
+}
+
+.boards h3 {
+  text-align: center;
+}
+
+#board-img {
+  border: 3px solid #8e8270;
+}
+
+.error {
+  font-style: italic;
+  color: firebrick;
+}
+
+.flash {
+  border: 2px solid #8e8270;
+}
+
+footer {
+  font-family: "Tangerine", cursive;
+  word-spacing: 0.3em;
+}
+
+footer,.flash,.page-heading {
+  text-align: center;
+}
+
+.form-container {
+  text-align: center;
+}
+
+form {
+  border: 2px solid #566034;
+  color: #646b58;
+  display: inline-block;
+  padding: 0.3125em;
+}
+
+form label {
+  text-shadow: 0px 1px 1px #b8bbb3;
+}
+
+form button {
+  background: -moz-linear-gradient(top, rgba(193,197,181,1) 0%, rgba(86,96,52,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(193,197,181,1)), color-stop(100%, rgba(86,96,52,1)));/* Chrome, Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(193,197,181,1) 0%, rgba(86,96,52,1) 100%); /* Chrome10+,Safari5.1+ */
+  border: none;
+  border-radius: 2px;
+  padding: 0.3125em;
+}
+
+form button:hover {
+  background: -moz-linear-gradient(top, rgba(86,96,52,1) 0%, rgba(193,197,181,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(86,96,52,1)), color-stop(100%, rgba(193,197,181,1)));/* Chrome, Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(86,96,52,1) 0%, rgba(193,197,181,1) 100%); /* Chrome10+,Safari5.1+ */
+}
+
+form div {
+  margin-bottom: 0.625em;
+}
+
+input[type="text"] {
+  border: none;
+  line-height: 1.5;
+  background-color: #d4dbcd;
+}
+
+img.resizable {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.instruction {
+  margin-bottom: 1.25em;
+}
+
+.instruction > img {
+  border-radius: 4px;
+  margin-bottom: 0.94em;
+}
+
+main {
+  margin: 0 auto;
+  padding: 0.3125em;
+}
+
+@media screen and (min-width: 640px) {
+  article {
+    margin: 0.94em auto;
+    max-width: 50em;
+    padding: 0.94em;
+  }
+
+  form {
+    padding: 0.625em;
+  }
+
+  .instruction > img {
+    float: left;
+    margin-right: 0.94em;
+  }
+
+  .form-container {
+    clear: left;
+  }
+
+  main {
+    margin: 0 auto;
+    max-width: 75em;
+    padding: 0.94em;
+  }
+}
+
+.page-heading {
+  margin-bottom: 0.94em;
+  text-transform: capitalize;
+}
+
+.status-msg {
+  background-color: #8e8270;
+  color: #e7ebe3;
+  font-weight: bold;
+  margin-top: 0.625em;
+  margin-bottom: 0.625em;
+  padding: 0.25em;
+  text-align: center;
+}
+
+table img {
+  display: block;
+}
+
+table {
+  background-image: url("/btlship/static/img/sea.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-collapse: collapse;
+  overflow: hidden;
+  table-layout: fixed;
+  margin-bottom: 10px;
+}
+
+td {
+  border: 1px solid black;
+  height: 32px;
+  padding: 0px;
+  text-align: center;
+  width: 32px;
+}

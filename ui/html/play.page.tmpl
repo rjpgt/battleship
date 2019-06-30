@@ -1,0 +1,42 @@
+{{ template "base" . }}
+
+{{define "content"}}
+  <h2 class="page-heading">{{.Player.NickName}}'s Board</h2>
+  <section class="boards">
+    <div class="ship-board">
+      <h3>{{.Player.NickName}}'s Ships</h3>
+      {{template "grid" .Player.Board}}
+    </div>
+    <div class="shots-board">
+      <h3>Shots fired by {{.Player.NickName}}</h3>
+      {{template "grid" .Player.ShotsBoard}}
+    </div>
+  </section>
+  <ul class="status-msg">
+    {{range .Player.StatusMsgs}}
+      <li>{{.}}</li>
+    {{end}}
+  </ul>
+  {{ $url := ""}}
+  {{ if .GameID }} {{ $url = .GameID }} {{end}}
+  {{ $opponent := ""}}
+  {{ if .Opponent }} {{ $opponent = .Opponent }} {{end}}
+  {{with .Form}}
+  <section class="form-container">
+    <!--
+    <form  action="/btlship/{{$url}}" method="POST" novalidate>
+    -->
+    <form action="/{{$url}}" method="POST" novalidate>
+      <label>Square to fire at {{$opponent}}'s ships</label>
+      <input type="text" name="target_pos" placeholder="47">
+      <button type="submit">Fire</button>
+    </form>
+  </section>
+  {{end}}
+  {{ if and (ne .Status 2) (not .Form) }}
+  <!--
+  <script src="/btlship/static/js/sse.js" type="text/javascript"></script>
+  -->
+  <script src="/static/js/sse.js" type="text/javascript"></script>
+  {{ end }}
+{{end}}

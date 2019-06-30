@@ -1,0 +1,98 @@
+{{ template "base" . }}
+
+{{define "content"}}
+  <h2 class="page-heading">
+    {{ if .Opponent }}
+      Join {{.Opponent}}'s game
+    {{ else }}
+      Start a new game
+    {{end}}
+  </h2>
+  <section  class="instruction">
+    <!--
+    <img class="resizable" id="board-img" src="/btlship/static/img/grid.png" />
+    -->
+    <img class="resizable" id="board-img" src="/static/img/grid.png" />
+    <div>
+      <h3>How to place your ships</h3>
+      <p>Use the form below to place your ships. Ships should be placed
+      horizontally or vertically and should not overlap. Use the image shown
+      to find out the row and column indices of the squares your ships
+      should occupy. A square is denoted by two digits, the first for the row
+      index and the second for the column index. For example, 53, denotes a square on row 5 and column 3. Specify a ship by entering its squares, separated by commas, from left to right( if the ship is on a row ) or top to bottom ( if the ship is on a column ). For example, 23,24,25,26 specifies a cruiser on row 2 from columns 3 to 6.</p>
+    </div>
+  </section>
+  {{ $url := "" }}
+  {{ if .GameID }} {{ $url = .GameID }} {{end}}
+  {{with .Form}}
+    <section class="form-container">
+      {{ if eq $url ""}}
+      <!--
+      <form action="/btlship/start" method="POST" novalidate>
+      -->
+      <form action="/start" method="POST" novalidate>
+      {{else}}
+      <!--
+      <form action="/btlship/join/{{$url}}" method="POST" novalidate>
+      -->
+      <form action="/join/{{$url}}" method="POST" novalidate>
+      {{end}}
+          <div>
+            {{with .Errors.Get "username"}}
+              {{range .}}
+                <div class="error">{{.}}</div>
+              {{end}}
+            {{end}}
+            <label>User name/Nickname</label>
+            <input type="text" name="username" value='{{.Get "username"}}'>
+          </div>
+          <div>
+            {{with .Errors.Get "btlship"}}
+              {{range .}}
+                <div class="error">{{.}}</div>
+              {{end}}
+            {{end}}
+            <label>Battleship( 5 squares )</label>
+            <input type="text" name="btlship" placeholder="18,28,38,48,58" value='{{.Get "btlship"}}'>
+          </div>
+          <div>
+            {{with .Errors.Get "cruiser"}}
+              {{range .}}
+                <div class="error">{{.}}</div>
+              {{end}}
+            {{end}}
+            <label>Cruiser( 4 squares )</label>
+            <input type="text" name="cruiser" placeholder="23,24,25,26" value='{{.Get "cruiser"}}'>
+          </div>
+          <div>
+            {{with .Errors.Get "frigate"}}
+              {{range .}}
+                <div class="error">{{.}}</div>
+              {{end}}
+            {{end}}
+            <label>Frigate( 3 squares )</label>
+            <input type="text" name="frigate" placeholder="55,65,75" value='{{.Get "frigate"}}'>
+          </div>
+          <div>
+            {{with .Errors.Get "destroyer"}}
+              {{range .}}
+                <div class="error">{{.}}</div>
+              {{end}}
+            {{end}}
+            <label>Destroyer( 3 squares )</label>
+            <input type="text" name="destroyer" placeholder="95,96,97" value='{{.Get "destroyer"}}'>
+          </div>
+          <div>
+            {{with .Errors.Get "patrolboat"}}
+              {{range .}}
+                <div class="error">{{.}}</div>
+              {{end}}
+            {{end}}
+            <label>Patrolboat( 2 squares )</label>
+            <input type="text" name="patrolboat" placeholder="70,71" value='{{.Get "patrolboat"}}'>
+          </div>
+          <button type="submit">Start game</button>
+      </form>
+    </section> 
+  {{end}}
+{{end}}
