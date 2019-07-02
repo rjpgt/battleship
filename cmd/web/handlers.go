@@ -12,8 +12,9 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if app.session.Exists(r, "gameID") {
-		gameID := app.session.GetString(r, "gameID")
+	session, _ := app.sessionStore.Get(r, "btlship-session")
+	gameID, ok := session.Values["gameID"].(string)
+	if ok {
 		http.Redirect(w, r, fmt.Sprintf("/%s", gameID), http.StatusSeeOther)
 		//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", gameID), http.StatusSeeOther)
 	} else {
@@ -55,10 +56,19 @@ func (app *application) startGame(w http.ResponseWriter, r *http.Request) {
 	app.gameModel.Games[pgame.ID] = pgame
 	// delete game from gameModel after timeout
 	go app.gameTimeout(pgame.ID)
-	app.session.Put(r, "gameID", pgame.ID)
+
+	session, _ := app.sessionStore.Get(r, "btlship-session")
+	session.Values["gameID"] = pgame.ID
+
 	for playerID := range pgame.Players {
-		app.session.Put(r, "playerID", playerID)
+		session.Values["playerID"] = playerID
 	}
+	err = session.Save(r, w)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	http.Redirect(w, r, fmt.Sprintf("/%s", pgame.ID), http.StatusSeeOther)
 	//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", pgame.ID), http.StatusSeeOther)
 }
@@ -66,7 +76,14 @@ func (app *application) startGame(w http.ResponseWriter, r *http.Request) {
 func (app *application) playGameForm(w http.ResponseWriter, r *http.Request) {
 	gameID := r.URL.Query().Get(":gameid")
 	pgame, _ := app.gameModel.Games[gameID]
-	playerID := app.session.GetString(r, "playerID")
+
+	session, _ := app.sessionStore.Get(r, "btlship-session")
+
+	playerID, ok := session.Values["playerID"].(string)
+	if !ok {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 	pgame.Mu.Lock()
 	defer pgame.Mu.Unlock()
 	pplayer, _ := pgame.Players[playerID]
@@ -87,32 +104,39 @@ func (app *application) playGameForm(w http.ResponseWriter, r *http.Request) {
 		if len(pgame.Players) == 0 {
 			delete(app.gameModel.Games, gameID)
 		}
-		app.session.Destroy(r)
+		session.Options.MaxAge = -1
+		err := session.Save(r, w)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
 	}
 
 	app.render(w, r, "play.page.tmpl", ptd)
 }
 
 func (app *application) handleSse(w http.ResponseWriter, r *http.Request) {
-	if !app.session.Exists(r, "gameID") || !app.session.Exists(r, "playerID") {
+	session, _ := app.sessionStore.Get(r, "btlship-session")
+	gameID, gameOk := session.Values["gameID"].(string)
+	playerID, playerOk := session.Values["playerID"].(string)
+
+	if !gameOk || !playerOk {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	gameID := app.session.GetString(r, "gameID")
 	pgame, ok := app.gameModel.Games[gameID]
 	if !ok {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
-	playerID := app.session.GetString(r, "playerID")
 	pplayer, ok := pgame.Players[playerID]
 	if !ok {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	ticker := time.NewTicker(15 * time.Second)
+	ticker := time.NewTicker(25 * time.Second)
 
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
@@ -126,14 +150,8 @@ func (app *application) handleSse(w http.ResponseWriter, r *http.Request) {
 			ticker.Stop()
 			return
 		case <-ticker.C:
-			/*
-				Because of the use of the sessions package
-				which uses a buffered writer this message will not
-				reach the client since we are not returning from this handler
-				here. But it will prevent idletimeout
-			*/
 			fmt.Fprintf(w, "data: %v\n\n", "stay alive")
-			//w.(http.Flusher).Flush()
+			w.(http.Flusher).Flush()
 		case <-pplayer.MsgChn:
 			fmt.Fprintf(w, "data: %v\n\n", "refresh")
 			ticker.Stop()
@@ -204,8 +222,16 @@ func (app *application) joinGame(w http.ResponseWriter, r *http.Request) {
 	}
 	pplayer1.MsgChn <- "refresh"
 	pgame.Status = 1
-	app.session.Put(r, "gameID", pgame.ID)
-	app.session.Put(r, "playerID", pplayer2.ID)
+
+	session, _ := app.sessionStore.Get(r, "btlship-session")
+	session.Values["gameID"] = pgame.ID
+	session.Values["playerID"] = pplayer2.ID
+
+	err = session.Save(r, w)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 	http.Redirect(w, r, fmt.Sprintf("/%s", pgame.ID), http.StatusSeeOther)
 	//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", pgame.ID), http.StatusSeeOther)
 }
@@ -219,7 +245,14 @@ func (app *application) playGame(w http.ResponseWriter, r *http.Request) {
 
 	gameID := r.URL.Query().Get(":gameid")
 	pgame, _ := app.gameModel.Games[gameID]
-	playerID := app.session.GetString(r, "playerID")
+
+	session, _ := app.sessionStore.Get(r, "btlship-session")
+	playerID, playerOk := session.Values["playerID"].(string)
+	if !playerOk {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
 	pgame.Mu.Lock()
 	defer pgame.Mu.Unlock()
 

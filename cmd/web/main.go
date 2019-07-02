@@ -5,9 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
-	"github.com/golangcollege/sessions"
+	"github.com/gorilla/sessions"
 	"github.com/rjpgt/battleship/pkg/models"
 )
 
@@ -15,10 +14,11 @@ type application struct {
 	errorLog      *log.Logger
 	gameModel     *models.GameModel
 	infoLog       *log.Logger
-	session       *sessions.Session
+	sessionStore  *sessions.CookieStore
 	templateCache map[string]*template.Template
 }
 
+// GameTimeout is the maximum no. of hours a game is stored
 const GameTimeout = 5
 const MaxGames = 5
 
@@ -42,10 +42,12 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
-	session := sessions.New([]byte("2NJJssnekSBl3n0k@cg;S<B2rtleLPyw"))
-	session.Lifetime = 12 * time.Hour
-	session.HttpOnly = false
-	session.Persist = false
+	sessionStore := sessions.NewCookieStore([]byte("2NJJssnekSBl3n0k@cg;S<B2rtleLPyw"))
+	sessionStore.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   60 * 60 * 5,
+		HttpOnly: false,
+	}
 
 	// This is our DB
 	games := map[string]*models.Game{}
@@ -54,7 +56,7 @@ func main() {
 		errorLog:      errorLog,
 		gameModel:     &models.GameModel{Games: games},
 		infoLog:       infoLog,
-		session:       session,
+		sessionStore:  sessionStore,
 		templateCache: templateCache,
 	}
 

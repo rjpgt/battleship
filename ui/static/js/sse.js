@@ -14,6 +14,8 @@ function connect() {
     if (e.data.includes('refresh')) {
       es.close();
       document.location.reload(true);
+    } else {
+      console.log(e.data);
     }
   }
 

@@ -30,11 +30,16 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 
-func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
+func (app *application) addDefaultData(td *templateData, r *http.Request, w http.ResponseWriter) *templateData {
 	if td == nil {
 		td = &templateData{}
 	}
-	td.Flash = app.session.PopString(r, "flash")
+	session, _ := app.sessionStore.Get(r, "btlship-session")
+	flashMsgs := session.Flashes()
+	if len(flashMsgs) != 0 {
+		td.Flash, _ = flashMsgs[0].(string)
+		session.Save(r, w)
+	}
 	return td
 }
 func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
@@ -46,7 +51,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 
 	buf := new(bytes.Buffer)
 
-	err := ts.Execute(buf, app.addDefaultData(td, r))
+	err := ts.Execute(buf, app.addDefaultData(td, r, w))
 	if err != nil {
 		app.serverError(w, err)
 		return

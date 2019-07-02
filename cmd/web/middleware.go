@@ -40,7 +40,9 @@ func (app *application) gameExists(next http.Handler) http.Handler {
 		gameID := r.URL.Query().Get(":gameid")
 		_, ok := app.gameModel.Games[gameID]
 		if !ok {
-			app.session.Put(r, "flash", "No such game or game has expired. Create a new game.")
+			session, _ := app.sessionStore.Get(r, "btlship-session")
+			session.AddFlash("No such game or game has expired")
+			session.Save(r, w)
 			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
@@ -54,7 +56,9 @@ func (app *application) canJoin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		pgame, _ := app.gameModel.Games[r.URL.Query().Get(":gameid")]
 		if len(pgame.Players) == 2 {
-			app.session.Put(r, "flash", "Game is full. Start another.")
+			session, _ := app.sessionStore.Get(r, "btlship-session")
+			session.AddFlash("Game is full. Start another.")
+			session.Save(r, w)
 			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
@@ -67,18 +71,21 @@ func (app *application) canJoin(next http.Handler) http.Handler {
 func (app *application) belongsToGame(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gameID := r.URL.Query().Get(":gameid")
-		if gameID != app.session.GetString(r, "gameID") {
-			app.session.Put(r, "flash", "No such game or you are not a part of the game. Start another.")
+		session, _ := app.sessionStore.Get(r, "btlship-session")
+		sessionGameID, _ := session.Values["gameID"].(string)
+		if gameID != sessionGameID {
+			session.AddFlash("No such game or you are not a part of the game. Start another.")
+			session.Save(r, w)
 			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}
 
 		pgame, _ := app.gameModel.Games[gameID]
-		playerID := app.session.GetString(r, "playerID")
+		playerID, _ := session.Values["playerID"].(string)
 		_, ok := pgame.Players[playerID]
 		if !ok {
-			app.session.Put(r, "flash", "You are not a part of this game. Create a new game.")
+			session.AddFlash("You are not a part of this game. Create a new game.")
 			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
