@@ -6,7 +6,7 @@
 
 body {
   background-color: #e7ebe3;
-  background-image: url("/btlship/static/img/church.png");
+  background-image: url("/static/img/church.png");
   color: #171717;
   font-family: "Ubuntu", sans-serif;
   font-size: 1.25em;
@@ -168,7 +168,7 @@ table img {
 }
 
 table {
-  background-image: url("/btlship/static/img/sea.jpg");
+  background-image: url("/static/img/sea.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   border-collapse: collapse;
