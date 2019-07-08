@@ -23,9 +23,6 @@
   {{ if .Opponent }} {{ $opponent = .Opponent }} {{end}}
   {{with .Form}}
   <section class="form-container">
-    <!--
-    <form  action="/btlship/{{$url}}" method="POST" novalidate>
-    -->
     <form action="/{{$url}}" method="POST" novalidate>
       <label>Square to fire at {{$opponent}}'s ships</label>
       <input type="text" name="target_pos" placeholder="47">
@@ -34,9 +31,6 @@
   </section>
   {{end}}
   {{ if and (ne .Status 2) (not .Form) }}
-  <!--
-  <script src="/btlship/static/js/sse.js" type="text/javascript"></script>
-  -->
   <script src="/static/js/sse.js" type="text/javascript"></script>
   {{ end }}
 {{end}}

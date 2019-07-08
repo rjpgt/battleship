@@ -15,10 +15,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if app.session.Exists(r, "gameID") {
 		gameID := app.session.GetString(r, "gameID")
 		http.Redirect(w, r, fmt.Sprintf("/%s", gameID), http.StatusSeeOther)
-		//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", gameID), http.StatusSeeOther)
 	} else {
 		http.Redirect(w, r, "/start", http.StatusSeeOther)
-		//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 	}
 }
 
@@ -60,7 +58,6 @@ func (app *application) startGame(w http.ResponseWriter, r *http.Request) {
 		app.session.Put(r, "playerID", playerID)
 	}
 	http.Redirect(w, r, fmt.Sprintf("/%s", pgame.ID), http.StatusSeeOther)
-	//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", pgame.ID), http.StatusSeeOther)
 }
 
 func (app *application) playGameForm(w http.ResponseWriter, r *http.Request) {
@@ -207,7 +204,6 @@ func (app *application) joinGame(w http.ResponseWriter, r *http.Request) {
 	app.session.Put(r, "gameID", pgame.ID)
 	app.session.Put(r, "playerID", pplayer2.ID)
 	http.Redirect(w, r, fmt.Sprintf("/%s", pgame.ID), http.StatusSeeOther)
-	//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", pgame.ID), http.StatusSeeOther)
 }
 
 func (app *application) playGame(w http.ResponseWriter, r *http.Request) {
@@ -225,7 +221,6 @@ func (app *application) playGame(w http.ResponseWriter, r *http.Request) {
 
 	if pgame.NextToPlay != playerID {
 		http.Redirect(w, r, fmt.Sprintf("/%s", gameID), http.StatusSeeOther)
-		//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", gameID), http.StatusSeeOther)
 		return
 	}
 
@@ -235,7 +230,6 @@ func (app *application) playGame(w http.ResponseWriter, r *http.Request) {
 	if !form.Valid() {
 		pplayer.StatusMsgs = append(pplayer.StatusMsgs, "You have entered an invalid firing position. Try again.")
 		http.Redirect(w, r, fmt.Sprintf("/%s", gameID), http.StatusSeeOther)
-		//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", gameID), http.StatusSeeOther)
 		return
 	}
 
@@ -289,5 +283,4 @@ outer:
 	}
 	popponent.MsgChn <- "refresh"
 	http.Redirect(w, r, fmt.Sprintf("/%s", pgame.ID), http.StatusSeeOther)
-	//http.Redirect(w, r, fmt.Sprintf("/btlship/%s", pgame.ID), http.StatusSeeOther)
 }

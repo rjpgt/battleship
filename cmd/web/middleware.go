@@ -41,7 +41,6 @@ func (app *application) gameExists(next http.Handler) http.Handler {
 		_, ok := app.gameModel.Games[gameID]
 		if !ok {
 			app.session.Put(r, "flash", "No such game or game has expired. Create a new game.")
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}
@@ -55,7 +54,6 @@ func (app *application) canJoin(next http.Handler) http.Handler {
 		pgame, _ := app.gameModel.Games[r.URL.Query().Get(":gameid")]
 		if len(pgame.Players) == 2 {
 			app.session.Put(r, "flash", "Game is full. Start another.")
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}
@@ -69,7 +67,6 @@ func (app *application) belongsToGame(next http.Handler) http.Handler {
 		gameID := r.URL.Query().Get(":gameid")
 		if gameID != app.session.GetString(r, "gameID") {
 			app.session.Put(r, "flash", "No such game or you are not a part of the game. Start another.")
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}
@@ -79,7 +76,6 @@ func (app *application) belongsToGame(next http.Handler) http.Handler {
 		_, ok := pgame.Players[playerID]
 		if !ok {
 			app.session.Put(r, "flash", "You are not a part of this game. Create a new game.")
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}

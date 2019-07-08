@@ -9,9 +9,6 @@
     {{end}}
   </h2>
   <section  class="instruction">
-    <!--
-    <img class="resizable" id="board-img" src="/btlship/static/img/grid.png" />
-    -->
     <img class="resizable" id="board-img" src="/static/img/grid.png" />
     <div>
       <h3>How to place your ships</h3>
@@ -27,14 +24,8 @@
   {{with .Form}}
     <section class="form-container">
       {{ if eq $url ""}}
-      <!--
-      <form action="/btlship/start" method="POST" novalidate>
-      -->
       <form action="/start" method="POST" novalidate>
       {{else}}
-      <!--
-      <form action="/btlship/join/{{$url}}" method="POST" novalidate>
-      -->
       <form action="/join/{{$url}}" method="POST" novalidate>
       {{end}}
           <div>
