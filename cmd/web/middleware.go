@@ -43,7 +43,6 @@ func (app *application) gameExists(next http.Handler) http.Handler {
 			session, _ := app.sessionStore.Get(r, "btlship-session")
 			session.AddFlash("No such game or game has expired")
 			session.Save(r, w)
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}
@@ -59,7 +58,6 @@ func (app *application) canJoin(next http.Handler) http.Handler {
 			session, _ := app.sessionStore.Get(r, "btlship-session")
 			session.AddFlash("Game is full. Start another.")
 			session.Save(r, w)
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}
@@ -76,7 +74,6 @@ func (app *application) belongsToGame(next http.Handler) http.Handler {
 		if gameID != sessionGameID {
 			session.AddFlash("No such game or you are not a part of the game. Start another.")
 			session.Save(r, w)
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}
@@ -86,7 +83,6 @@ func (app *application) belongsToGame(next http.Handler) http.Handler {
 		_, ok := pgame.Players[playerID]
 		if !ok {
 			session.AddFlash("You are not a part of this game. Create a new game.")
-			//http.Redirect(w, r, "/btlship/start", http.StatusSeeOther)
 			http.Redirect(w, r, "/start", http.StatusSeeOther)
 			return
 		}

@@ -111,7 +111,6 @@ func NewGame(formFields url.Values) (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
-	//joinURL := fmt.Sprintf("https://amrtam.in/btlship/join/%s", id)
 	joinURL := fmt.Sprintf("/join/%s", id)
 	pplayer.StatusMsgs = []string{
 		fmt.Sprintf("Invite opponent to %s.", joinURL),

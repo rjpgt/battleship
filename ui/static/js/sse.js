@@ -8,7 +8,6 @@ let es;
 
 function connect() {
   console.log("connecting");
-  //es = new EventSource('/btlship/sse');
   es = new EventSource('/sse');
   es.onmessage = (e) => {
     if (e.data.includes('refresh')) {

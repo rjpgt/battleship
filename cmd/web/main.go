@@ -60,7 +60,6 @@ func main() {
 		templateCache: templateCache,
 	}
 
-	//addr := ":21837"
 	addr := ":8000"
 	srv := &http.Server{
 		Addr:     addr,

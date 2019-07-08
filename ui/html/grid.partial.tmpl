@@ -11,9 +11,6 @@
        <tr>
           <td>{{ $row_index }}</td>
           {{ range $row }}
-          <!--
-            <td>{{ if . }} <img src="{{ printf "/btlship/static/img/%s.png" . }}" width="32" height="32"> {{else}} {{end}}</td>
-          -->
             <td>{{ if . }} <img src="{{ printf "/static/img/%s.png" . }}" width="32" height="32"> {{else}} {{end}}</td>
           {{ end }}
        </tr>
